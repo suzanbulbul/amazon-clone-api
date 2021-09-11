@@ -1,12 +1,15 @@
 const router = require('express').Router();
 const Owner = require('../models/owner');
+const uploud = require('../middlewares/uploud-photo')
 
 //POST api
-router.post('/owners', async (req, res) => {
+router.post('/owners',uploud.single("photo"),  async (req, res) => {
     try {
         let owner = new Owner();
+        console.log(req.body)
         owner.name = req.body.name;
         owner.about = req.body.about;
+        owner.photo = req.file.location;
         await owner.save();
 
         res.json({
@@ -15,6 +18,7 @@ router.post('/owners', async (req, res) => {
         })
 
     } catch (err) {
+        console.log(err)
         res.status(500).json({
             success: false,
             message: err.message
